@@ -1,0 +1,5 @@
+require('./Folders.tag')
+require('./FolderBasename.tag')
+require('./FolderDescription.tag')
+require('./FolderID.tag')
+require('./FolderLabel.tag')

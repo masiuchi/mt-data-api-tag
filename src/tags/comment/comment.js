@@ -1,0 +1,5 @@
+require('./Comments.tag')
+require('./CommentBody.tag')
+require('./CommentEntryID.tag')
+require('./CommentID.tag')
+require('./CommentLink.tag')

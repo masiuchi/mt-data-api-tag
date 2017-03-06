@@ -1,0 +1,20 @@
+{
+  "name": "riot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-es2015-riot": "^1.1.0",
+    "riotjs-loader": "^4.0.0",
+    "webpack": "1.14.0"
+  },
+  "dependencies": {
+    "riot": "2.6.7"
+  },
+  "scripts": {
+    "build": "webpack -w"
+  }
+}

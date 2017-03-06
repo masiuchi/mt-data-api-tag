@@ -1,0 +1,6 @@
+require('./Categories.tag')
+require('./CategoryArchiveLink.tag')
+require('./CategoryBasename.tag')
+require('./CategoryDescription.tag')
+require('./CategoryID.tag')
+require('./CategoryLabel.tag')
