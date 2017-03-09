@@ -4,25 +4,27 @@ require('../core/Dummy.tag')
   <mtdummy each={ asset, i in assets }><yield/></mtdummy>
 
   <script>
-    const dataapi = require('../../data-api.js')
+    const dataapi = require('../../MTDataAPITag.js')
+
+    if ('blog_id' in opts) {
+      this.blog_id = opts.blog_id
+    } else if (this.blog) {
+      this.blog_id = this.blog.id
+    } else {
+      this.blog_id = dataapi.blogId
+    }
 
     this.assets = []
 
     const self = this
 
     this.on('mount', () => {
-      let blog_id;
-      if (opts.blog_id !== undefined && opts.blog_id !== null) {
-        blog_id = opts.blog_id
-      } else if (self.blog) {
-        blog_id = self.blog.id
-      }
-
-      if (blog_id === undefined) {
+      if (self.blog_id === null || self.blog_id === undefined) {
+        console.log('MTAssets tag need blog_id parameter')
         return
       }
 
-      dataapi.listAssets(blog_id, (response) => {
+      dataapi.client.listAssets(self.blog_id, (response) => {
         if (response.error) {
           console.log(response.error)
           list.assets = []

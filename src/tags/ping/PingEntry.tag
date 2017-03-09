@@ -4,7 +4,7 @@ require('../core/Dummy.tag')
   <mtdummy each={ entry in entries }><yield/></mtdummy>
 
   <script>
-    const dataapi = require('../../data-api.js')
+    const dataapi = require('../../MTDataAPITag.js')
     const self = this
     this.on('mount', () => {
       if (!self.ping) {
@@ -12,7 +12,7 @@ require('../core/Dummy.tag')
         return
       }
 
-      dataapi.getEntry(self.ping.blog.id, self.ping.entry.id, (response) => {
+      dataapi.client.getEntry(self.ping.blog.id, self.ping.entry.id, (response) => {
         if (response.error) {
           console.log(response.error)
           return

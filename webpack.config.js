@@ -21,6 +21,10 @@ module.exports = {
         test: /\.js$|\.tag$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
+      },
+      {
+        test: /MTDataAPITag\.js$/,
+        loader: 'expose-loader?DataAPITag'
       }
     ]
   },
@@ -31,5 +35,9 @@ module.exports = {
    new webpack.ProvidePlugin({
      riot: 'riot'
    })
-  ]
+  ],
+  devServer: {
+    contentBase: '.',
+    port: 3000
+  },
 }

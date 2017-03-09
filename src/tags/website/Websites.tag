@@ -4,7 +4,7 @@ require('../core/Dummy.tag')
   <mtdummy each={ website, i in websites }><yield/></mtdummy>
 
   <script>
-    const dataapi = require('../../data-api.js')
+    const dataapi = require('../../MTDataAPITag.js')
 
     this.websites = []
 
@@ -16,7 +16,7 @@ require('../core/Dummy.tag')
     })
 
     this.fetch = (totalLimit, limit, offset) => {
-      dataapi.listSites({ limit: limit, offset: offset }, (response) => {
+      dataapi.client.listSites({ limit: limit, offset: offset }, (response) => {
         if (response.error) {
           console.log(response.error)
           self.update()

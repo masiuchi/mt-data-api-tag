@@ -1,10 +1,10 @@
 <mtcommentbody>
-  <div></div><yield/>
+  <yield/>
 
   <script>
     this.on('update', () => {
       if (this.comment && this.comment.body) {
-        this.root.childNodes[0].innerHTML = this.comment.body
+        this.root.innerHTML = this.comment.body
       }
     })
   </script>

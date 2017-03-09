@@ -4,21 +4,25 @@ require('../core/Dummy.tag')
   <mtdummy each={ entry, i in entries }><yield/></mtdummy>
 
   <script>
-    const dataapi = require('../../data-api.js')
+    const dataapi = require('../../MTDataAPITag.js')
 
-    this.blog_id = opts.blog_id
+    if ('blog_id' in opts) {
+      this.blog_id = opts.blog_id
+    } else {
+      this.blog_id = dataapi.blogId
+    }
 
     this.entries = []
     this.entriesCount = 0
 
     const self = this
     this.on('mount', () => {
-      if (!self.blog_id) {
+      if (self.blog_id === null || self.blog_id == undefined) {
         console.log('MTPages tag needs blog_id parameter.')
         return
       }
 
-      dataapi.listPages(self.blog_id, self.makeParams(), (response) => {
+      dataapi.client.listPages(self.blog_id, self.makeParams(), (response) => {
         if (response.error) {
           console.log(response.error)
           return

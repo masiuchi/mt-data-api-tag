@@ -46,76 +46,79 @@
 
 	'use strict';
 
+	// top
 	__webpack_require__(1);
-	__webpack_require__(17);
-	__webpack_require__(31);
-	__webpack_require__(38);
-	__webpack_require__(44);
-	__webpack_require__(45);
-	__webpack_require__(58);
-	__webpack_require__(64);
-	__webpack_require__(76);
-	__webpack_require__(86);
 
-	__webpack_require__(3).mount('*');
+	// riot custom tags
+	// these will be mounted after initializing DataAPI client in MTDataAPITag.js
+	__webpack_require__(7);
+	__webpack_require__(18);
+	__webpack_require__(32);
+	__webpack_require__(39);
+	__webpack_require__(45);
+	__webpack_require__(46);
+	__webpack_require__(60);
+	__webpack_require__(66);
+	__webpack_require__(78);
+	__webpack_require__(88);
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
 
-	__webpack_require__(2);
-	__webpack_require__(9);
-	__webpack_require__(10);
-	__webpack_require__(11);
-	__webpack_require__(12);
-	__webpack_require__(13);
-	__webpack_require__(14);
-	__webpack_require__(15);
-	__webpack_require__(16);
+	module.exports = global["DataAPITag"] = __webpack_require__(2);
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+	const riot = __webpack_require__(3)
+	const DataAPI = __webpack_require__(5)
 
-	__webpack_require__(5);
+	module.exports = {
+	  baseUrl: '',
+	  clientId: 'mt-data-api-tag',
+	  blogId: 0,
+	  blog: null,
+	  client: null,
 
-	riot.tag2('mtassets', '<mtdummy each="{asset, i in assets}"><yield></yield></mtdummy>', '', '', function (opts) {
-	  var dataapi = __webpack_require__(6);
-
-	  this.assets = [];
-
-	  var self = this;
-
-	  this.on('mount', function () {
-	    var blog_id = void 0;
-	    if (opts.blog_id !== undefined && opts.blog_id !== null) {
-	      blog_id = opts.blog_id;
-	    } else if (self.blog) {
-	      blog_id = self.blog.id;
+	  rebuild: function (args) {
+	    if (!args || !('baseUrl' in args)) {
+	      console.log('baseUrl parameter is required')
+	      return
+	    } else {
+	      this.baseUrl = args.baseUrl
+	    }
+	    if ('clientId' in args) {
+	      this.clientId = args.clientId
+	    }
+	    if ('blogId' in args) {
+	      this.blogId = args.blogId
 	    }
 
-	    if (blog_id === undefined) {
-	      return;
+	    const self = this
+	    this.client = new DataAPI({
+	      baseUrl: self.baseUrl,
+	      clientId: self.clientId
+	    })
+	    if (this.blogId) {
+	      this.client.getBlog(this.blogId, function(response) {
+	        if (response.error) {
+	          console.log(`cannot get blog (blog_id: ${self.blogId})`)
+	          return
+	        }
+	        self.blog = response
+	        riot.mount('*')
+	      })
+	    } else {
+	      riot.mount('*')
 	    }
+	  }
+	}
 
-	    dataapi.listAssets(blog_id, function (response) {
-	      if (response.error) {
-	        console.log(response.error);
-	        list.assets = [];
-	        self.update();
-	        return;
-	      }
-
-	      self.assets = response.items;
-	      self.update();
-	    });
-	  });
-	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 3 */
@@ -2820,29 +2823,6 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	riot.tag2('mtdummy', '<yield></yield>', '', '', function (opts) {});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var DataAPI = __webpack_require__(7);
-
-	module.exports = new DataAPI({
-	  // baseUrl: 'https://app.movabletype.jp/mt/mt-data-api.cgi',
-	  baseUrl: 'http://localhost:5000/mt-data-api.cgi',
-	  clientId: 'riot'
-	});
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {"use strict";
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3748,10 +3728,10 @@
 	  }), window.MT = window.MT || {}, window.MT.DataAPI = window.MT.DataAPI || DataAPI, window.MT.DataAPI["v" + DataAPI.version] = DataAPI, DataAPI;
 	});
 	//# sourceMappingURL=mt-data-api.min.map
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ },
-/* 8 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -3767,12 +3747,72 @@
 
 
 /***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(8);
+	__webpack_require__(10);
+	__webpack_require__(11);
+	__webpack_require__(12);
+	__webpack_require__(13);
+	__webpack_require__(14);
+	__webpack_require__(15);
+	__webpack_require__(16);
+	__webpack_require__(17);
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	__webpack_require__(9);
+
+	riot.tag2('mtassets', '<mtdummy each="{asset, i in assets}"><yield></yield></mtdummy>', '', '', function (opts) {
+	  var dataapi = __webpack_require__(1);
+
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else if (this.blog) {
+	    this.blog_id = this.blog.id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
+
+	  this.assets = [];
+
+	  var self = this;
+
+	  this.on('mount', function () {
+	    if (self.blog_id === null || self.blog_id === undefined) {
+	      console.log('MTAssets tag need blog_id parameter');
+	      return;
+	    }
+
+	    dataapi.client.listAssets(self.blog_id, function (response) {
+	      if (response.error) {
+	        console.log(response.error);
+	        list.assets = [];
+	        self.update();
+	        return;
+	      }
+
+	      self.assets = response.items;
+	      self.update();
+	    });
+	  });
+	});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassetdescription', '{asset.description}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtdummy', '<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3781,7 +3821,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassetfileext', '{asset.fileExtension}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassetdescription', '{asset.description}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3790,7 +3830,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassetfilename', '{asset.filename}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassetfileext', '{asset.fileExtension}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3799,7 +3839,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassetid', '{asset.id}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassetfilename', '{asset.filename}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3808,7 +3848,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassetlabel', '{asset.label}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassetid', '{asset.id}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3817,7 +3857,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassetmimetype', '{asset.mimeType}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassetlabel', '{asset.label}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3826,7 +3866,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtassettype', '{asset.type}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassetmimetype', '{asset.mimeType}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -3835,16 +3875,24 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtasseturl', '{asset.url}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtassettype', '{asset.type}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	riot.tag2('mtasseturl', '{asset.url}<yield></yield>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
-	__webpack_require__(18);
 	__webpack_require__(19);
 	__webpack_require__(20);
 	__webpack_require__(21);
@@ -3857,17 +3905,18 @@
 	__webpack_require__(28);
 	__webpack_require__(29);
 	__webpack_require__(30);
+	__webpack_require__(31);
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtblogs', '<mtdummy each="{blog, i in blogs}"><yield></yield></mtdummy>', '', '', function (opts) {
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
 	  this.blogs = [];
 
@@ -3879,7 +3928,7 @@
 	  });
 
 	  this.fetch = function (totalLimit, limit, offset) {
-	    dataapi.listSites({ limit: limit, offset: offset }, function (response) {
+	    dataapi.client.listSites({ limit: limit, offset: offset }, function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        self.update();
@@ -3913,7 +3962,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3922,7 +3971,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3931,7 +3980,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3940,7 +3989,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3949,7 +3998,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3958,7 +4007,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3967,7 +4016,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3976,7 +4025,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3985,7 +4034,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -3994,7 +4043,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4003,7 +4052,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4012,7 +4061,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4021,44 +4070,48 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(32);
 	__webpack_require__(33);
 	__webpack_require__(34);
 	__webpack_require__(35);
 	__webpack_require__(36);
 	__webpack_require__(37);
+	__webpack_require__(38);
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtcategories', '<mtdummy each="{category, i in categories}"><yield></yield></mtdummy>', '', '', function (opts) {
 	  var _this = this;
 
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
-	  this.blog_id = opts.blog_id;
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
 
 	  this.categories = [];
 	  this.categoriesCount = 0;
 
 	  var self = this;
 	  this.on('mount', function () {
-	    if (!_this.blog_id) {
+	    if (_this.blog_id === null || _this.blog_id === undefined) {
 	      console.log('MTCategories tag needs blog_id parameter.');
 	      return;
 	    }
 
-	    dataapi.listCategories(self.blog_id, function (response) {
+	    dataapi.client.listCategories(self.blog_id, function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4074,7 +4127,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4083,7 +4136,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4092,7 +4145,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4101,7 +4154,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4110,7 +4163,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4119,43 +4172,47 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(39);
 	__webpack_require__(40);
 	__webpack_require__(41);
 	__webpack_require__(42);
 	__webpack_require__(43);
+	__webpack_require__(44);
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtcomments', '<mtcomment each="{comment, i in comments}"><yield></yield></mtcomment>', '', '', function (opts) {
 	  var _this = this;
 
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
-	  this.blog_id = opts.blog_id;
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
 
 	  this.comments = [];
 	  this.commentsCount = 0;
 
 	  var self = this;
 	  this.on('mount', function () {
-	    if (!self.blog_id) {
+	    if (self.blog_id === null || self.blog_id === undefined) {
 	      console.log('MTComments tag needs blog_id parameter.');
 	      return;
 	    }
 
-	    dataapi.listComments(self.blog_id, self.makeParams(), function (response) {
+	    dataapi.client.listComments(self.blog_id, self.makeParams(), function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4184,29 +4241,20 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	riot.tag2('mtcommentbody', '<div></div><yield></yield>', '', '', function (opts) {
-	  var _this = this;
-
-	  this.on('update', function () {
-	    if (_this.comment && _this.comment.body) {
-	      _this.root.childNodes[0].innerHTML = _this.comment.body;
-	    }
-	  });
-	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
 /* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtcommententryid', '{comment.entry.id}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtcommentbody', '<yield></yield>', '', '', function (opts) {
+	  var _this = this;
+
+	  this.on('update', function () {
+	    if (_this.comment && _this.comment.body) {
+	      _this.root.innerHTML = _this.comment.body;
+	    }
+	  });
+	});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4215,7 +4263,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtcommentid', '{comment.id}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtcommententryid', '{comment.entry.id}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4224,16 +4272,17 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtcommentlink', '{comment.link}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtcommentid', '{comment.id}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	riot.tag2('mtcommentlink', '{comment.link}<yield></yield>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 45 */
@@ -4241,7 +4290,14 @@
 
 	'use strict';
 
-	__webpack_require__(46);
+	__webpack_require__(9);
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	__webpack_require__(47);
 	__webpack_require__(48);
 	__webpack_require__(49);
@@ -4253,33 +4309,39 @@
 	__webpack_require__(55);
 	__webpack_require__(56);
 	__webpack_require__(57);
+	__webpack_require__(58);
+	__webpack_require__(59);
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtentries', '<mtdummy each="{entry, i in entries}"><yield></yield></mtdummy>', '', '', function (opts) {
 	  var _this = this;
 
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
-	  this.blog_id = opts.blog_id;
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
 
 	  this.entries = [];
 	  this.entriesCount = 0;
 
 	  var self = this;
 	  this.on('mount', function () {
-	    if (!self.blog_id) {
+	    if (self.blog_id === null || self.blog_id === undefined) {
 	      console.log('MTEntries tag needs blog_id parameter.');
 	      return;
 	    }
 
-	    dataapi.listEntries(self.blog_id, self.makeParams(), function (response) {
+	    dataapi.client.listEntries(self.blog_id, self.makeParams(), function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4308,7 +4370,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4334,7 +4396,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4359,7 +4421,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4368,7 +4430,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4385,7 +4447,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4394,21 +4456,18 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 52 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	riot.tag2('mtentryexcerpt', '{entry.excerpt}<yield></yield>', '', '', function (opts) {});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
 /* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtentryid', '{entry.id}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtentryexcerpt', '<yield></yield>', '', '', function (opts) {
+	  this.on('update', function () {
+	    if (this.entry && this.entry.excerpt) {
+	      this.root.innerHTML = this.entry.excerpt;
+	    }
+	  });
+	});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4417,7 +4476,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtentrykeywords', '{entry.keywords}<yield></yield>', '', '', function (opts) {});
+	riot.tag2('mtentryid', '{entry.id}<yield></yield>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4426,8 +4485,16 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	riot.tag2('mtentrymore', '<div></div><yield></yield>', '', '', function (opts) {
+	riot.tag2('mtentrykeywords', '{entry.keywords}<yield></yield>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	riot.tag2('mtentrymore', '<yield></yield>', '', '', function (opts) {
 	  this.on('update', function () {
 	    if (this.entry && this.entry.more) {
 	      this.root.childNodes[0].innerHTML = this.entry.more;
@@ -4437,7 +4504,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4446,7 +4513,16 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 57 */
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	riot.tag2('mtentrypermalinkblock', '<a href="{entry.permalink}"><yield></yield></a>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4455,43 +4531,47 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(59);
-	__webpack_require__(60);
 	__webpack_require__(61);
 	__webpack_require__(62);
 	__webpack_require__(63);
+	__webpack_require__(64);
+	__webpack_require__(65);
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtfolders', '<mtdummy each="{category, i in categories}"><yield></yield></mtdummy>', '', '', function (opts) {
 	  var _this = this;
 
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
-	  this.blog_id = opts.blog_id;
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
 
 	  this.categories = [];
 	  this.categoriesCount = 0;
 
 	  var self = this;
 	  this.on('mount', function () {
-	    if (!_this.blog_id) {
+	    if (_this.blog_id === null || _this.blog_id === undefined) {
 	      console.log('MTFolders tag needs blog_id parameter.');
 	      return;
 	    }
 
-	    dataapi.listFolders(self.blog_id, function (response) {
+	    dataapi.client.listFolders(self.blog_id, function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4507,33 +4587,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 60 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	__webpack_require__(34);
-	riot.tag2('mtfolderbasename', '<mtcategorybasename><yield></yield></mtcategorybasename>', '', '', function (opts) {});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 61 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	__webpack_require__(35);
-	riot.tag2('mtfolderdescription', '<mtcategorydescription><yield></yield></mtcategorydescription>', '', '', function (opts) {});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
 /* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(36);
-	riot.tag2('mtfolderid', '<mtcategoryid><yield></yield></mtcategoryid>', '', '', function (opts) {});
+	__webpack_require__(35);
+	riot.tag2('mtfolderbasename', '<mtcategorybasename><yield></yield></mtcategorybasename>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4542,18 +4602,36 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(37);
-	riot.tag2('mtfolderlabel', '<mtcategorylabel><yield></yield></mtcategorylabel>', '', '', function (opts) {});
+	__webpack_require__(36);
+	riot.tag2('mtfolderdescription', '<mtcategorydescription><yield></yield></mtcategorydescription>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	__webpack_require__(37);
+	riot.tag2('mtfolderid', '<mtcategoryid><yield></yield></mtcategoryid>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 65 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	__webpack_require__(38);
+	riot.tag2('mtfolderlabel', '<mtcategorylabel><yield></yield></mtcategorylabel>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 66 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
-	__webpack_require__(65);
-	__webpack_require__(66);
 	__webpack_require__(67);
 	__webpack_require__(68);
 	__webpack_require__(69);
@@ -4563,33 +4641,39 @@
 	__webpack_require__(73);
 	__webpack_require__(74);
 	__webpack_require__(75);
+	__webpack_require__(76);
+	__webpack_require__(77);
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtpages', '<mtdummy each="{entry, i in entries}"><yield></yield></mtdummy>', '', '', function (opts) {
 	  var _this = this;
 
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
-	  this.blog_id = opts.blog_id;
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
 
 	  this.entries = [];
 	  this.entriesCount = 0;
 
 	  var self = this;
 	  this.on('mount', function () {
-	    if (!self.blog_id) {
+	    if (self.blog_id === null || self.blog_id == undefined) {
 	      console.log('MTPages tag needs blog_id parameter.');
 	      return;
 	    }
 
-	    dataapi.listPages(self.blog_id, self.makeParams(), function (response) {
+	    dataapi.client.listPages(self.blog_id, self.makeParams(), function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4618,33 +4702,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	__webpack_require__(47);
-	riot.tag2('mtpagescount', '<mtentriescount><yield></yield></mtentriescount>', '', '', function (opts) {});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 67 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
-
-	__webpack_require__(48);
-	riot.tag2('mtpagesfooter', '<mtentriesfooter><yield></mtentriesfooter>', '', '', function (opts) {});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
 /* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(49);
-	riot.tag2('mtpagesheader', '<mtentriesheader><yield></yield></mtentriesheader>', '', '', function (opts) {});
+	__webpack_require__(48);
+	riot.tag2('mtpagescount', '<mtentriescount><yield></yield></mtentriescount>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4653,8 +4717,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(50);
-	riot.tag2('mtpagebody', '<mtentrybody><yield></yield></mtentrybody>', '', '', function (opts) {});
+	__webpack_require__(49);
+	riot.tag2('mtpagesfooter', '<mtentriesfooter><yield></mtentriesfooter>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4663,8 +4727,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(52);
-	riot.tag2('mtpageexcerpt', '<mtentryexcerpt><yield></yield></mtentryexcerpt>', '', '', function (opts) {});
+	__webpack_require__(50);
+	riot.tag2('mtpagesheader', '<mtentriesheader><yield></yield></mtentriesheader>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4673,8 +4737,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(53);
-	riot.tag2('mtpageid', '<mtentryid><yield></yield></mtentryid>', '', '', function (opts) {});
+	__webpack_require__(51);
+	riot.tag2('mtpagebody', '<mtentrybody><yield></yield></mtentrybody>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4683,8 +4747,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(54);
-	riot.tag2('mtpagekeywords', '<mtentrykeywords><yield></yield></mtentrykeywords>', '', '', function (opts) {});
+	__webpack_require__(53);
+	riot.tag2('mtpageexcerpt', '<mtentryexcerpt><yield></yield></mtentryexcerpt>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4693,8 +4757,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(55);
-	riot.tag2('mtpagemore', '<mtentrymore><yield></yield></mtentrymore>', '', '', function (opts) {});
+	__webpack_require__(54);
+	riot.tag2('mtpageid', '<mtentryid><yield></yield></mtentryid>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4703,8 +4767,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(56);
-	riot.tag2('mtpagepermalink', '<mtentrypermalink><yield></yield></mtentrypermalink>', '', '', function (opts) {});
+	__webpack_require__(55);
+	riot.tag2('mtpagekeywords', '<mtentrykeywords><yield></yield></mtentrykeywords>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -4713,25 +4777,19 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(57);
-	riot.tag2('mtpagetitle', '<mtentrytitle><yield></yield></mtentrytitle>', '', '', function (opts) {});
+	__webpack_require__(56);
+	riot.tag2('mtpagemore', '<mtentrymore><yield></yield></mtentrymore>', '', '', function (opts) {});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(77);
-	__webpack_require__(78);
-	__webpack_require__(79);
-	__webpack_require__(80);
-	__webpack_require__(81);
-	__webpack_require__(82);
-	__webpack_require__(83);
-	__webpack_require__(84);
-	__webpack_require__(85);
+	__webpack_require__(57);
+	riot.tag2('mtpagepermalink', '<mtentrypermalink><yield></yield></mtentrypermalink>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 77 */
@@ -4739,26 +4797,56 @@
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(59);
+	riot.tag2('mtpagetitle', '<mtentrytitle><yield></yield></mtentrytitle>', '', '', function (opts) {});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(79);
+	__webpack_require__(80);
+	__webpack_require__(81);
+	__webpack_require__(82);
+	__webpack_require__(83);
+	__webpack_require__(84);
+	__webpack_require__(85);
+	__webpack_require__(86);
+	__webpack_require__(87);
+
+/***/ },
+/* 79 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
+
+	__webpack_require__(9);
 
 	riot.tag2('mtpings', '<mtdummy each="{ping, i in pings}"><yield></yield></mtdummy>', '', '', function (opts) {
 	  var _this = this;
 
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
-	  this.blog_id = opts.blog_id;
+	  if ('blog_id' in opts) {
+	    this.blog_id = opts.blog_id;
+	  } else {
+	    this.blog_id = dataapi.blogId;
+	  }
 
 	  this.pings = [];
 	  this.pingsCount = 0;
 
 	  var self = this;
 	  this.on('mount', function () {
-	    if (!self.blog_id) {
+	    if (self.blog_id === null || self.blog_id === undefined) {
 	      console.log('MTPings tag needs blog_id parameter.');
 	      return;
 	    }
 
-	    dataapi.listTrackbacks(self.blog_id, self.makeParams(), function (response) {
+	    dataapi.client.listTrackbacks(self.blog_id, self.makeParams(), function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4787,7 +4875,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 78 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4796,7 +4884,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 79 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4805,15 +4893,15 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 80 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtpingentry', '<mtdummy each="{entry in entries}"><yield></yield></mtdummy>', '', '', function (opts) {
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 	  var self = this;
 	  this.on('mount', function () {
 	    if (!self.ping) {
@@ -4821,7 +4909,7 @@
 	      return;
 	    }
 
-	    dataapi.getEntry(self.ping.blog.id, self.ping.entry.id, function (response) {
+	    dataapi.client.getEntry(self.ping.blog.id, self.ping.entry.id, function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        return;
@@ -4835,7 +4923,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 81 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4844,7 +4932,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 82 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4853,7 +4941,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 83 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4862,7 +4950,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 84 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4871,7 +4959,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4880,13 +4968,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 86 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(87);
-	__webpack_require__(88);
 	__webpack_require__(89);
 	__webpack_require__(90);
 	__webpack_require__(91);
@@ -4897,17 +4983,19 @@
 	__webpack_require__(96);
 	__webpack_require__(97);
 	__webpack_require__(98);
+	__webpack_require__(99);
+	__webpack_require__(100);
 
 /***/ },
-/* 87 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
 
-	__webpack_require__(5);
+	__webpack_require__(9);
 
 	riot.tag2('mtwebsites', '<mtdummy each="{website, i in websites}"><yield></yield></mtdummy>', '', '', function (opts) {
-	  var dataapi = __webpack_require__(6);
+	  var dataapi = __webpack_require__(1);
 
 	  this.websites = [];
 
@@ -4919,7 +5007,7 @@
 	  });
 
 	  this.fetch = function (totalLimit, limit, offset) {
-	    dataapi.listSites({ limit: limit, offset: offset }, function (response) {
+	    dataapi.client.listSites({ limit: limit, offset: offset }, function (response) {
 	      if (response.error) {
 	        console.log(response.error);
 	        self.update();
@@ -4953,7 +5041,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 88 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4962,7 +5050,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 89 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4971,7 +5059,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 90 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4980,7 +5068,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 91 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4989,7 +5077,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 92 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -4998,7 +5086,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 93 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -5007,7 +5095,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 94 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -5016,7 +5104,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 95 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -5025,7 +5113,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 96 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -5034,7 +5122,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 97 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';
@@ -5043,7 +5131,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 98 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(riot) {'use strict';

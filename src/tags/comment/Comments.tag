@@ -4,21 +4,25 @@ require('../core/Dummy.tag')
   <mtcomment each={ comment, i in comments }><yield/></mtcomment>
 
   <script>
-    const dataapi = require('../../data-api.js')
+    const dataapi = require('../../MTDataAPITag.js')
 
-    this.blog_id = opts.blog_id
+    if ('blog_id' in opts) {
+      this.blog_id = opts.blog_id
+    } else {
+      this.blog_id = dataapi.blogId
+    }
 
     this.comments = []
     this.commentsCount = 0
 
     const self = this
     this.on('mount', () => {
-      if (!self.blog_id) {
+      if (self.blog_id === null || self.blog_id === undefined) {
         console.log('MTComments tag needs blog_id parameter.')
         return
       }
 
-      dataapi.listComments(self.blog_id, self.makeParams(), (response) => {
+      dataapi.client.listComments(self.blog_id, self.makeParams(), (response) => {
         if (response.error) {
           console.log(response.error)
           return
